@@ -12,11 +12,22 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 
-def remove_unwanted_lines(text):
-    unwanted_text = "PDFTron PDF2Text: This page is skipped when running in the demo mode."
-    lines = text.splitlines()
-    filtered_lines = [line for line in lines if unwanted_text not in line]
-    return "\n".join(filtered_lines)
+#def remove_unwanted_lines(text):
+    #unwanted_text = "PDFTron PDF2Text: This page is skipped when running in the demo mode."
+    #lines = text.splitlines()
+    #filtered_lines = [line for line in lines if unwanted_text not in line]
+    #print(filtered_lines)
+    #return "\n".join(filtered_lines)
+
+
+def write_texts_to_files(textapryse, easyOCRtext):
+    textapryse_filename = os.path.join("final", 'textapryse_output.txt')
+    easyOCRtext_filename = os.path.join("final", 'easyOCR_output.txt')
+    with open(textapryse_filename, 'w', encoding='utf-8') as file:
+        file.write(textapryse)
+
+    with open(easyOCRtext_filename, 'w', encoding='utf-8') as file:
+        file.write(easyOCRtext)
 
 
 @app.route('/upload-pdf', methods=['POST'])
@@ -32,12 +43,11 @@ def upload_pdf():
         print(filepath)
         file.save(filepath)
         textapryse = apryse.convert_to_text(filepath)
-        textapryse = remove_unwanted_lines(textapryse)
-        print(textapryse[:500])
+        #textapryse = remove_unwanted_lines(textapryse)
+        #easyOCRtext = easyOCR.process_images(filepath)
+        easyOCRtext = ""
+        write_texts_to_files(textapryse, easyOCRtext)
 
-        easyOCRtext = easyOCR.process_images(filepath)
-
-        print(easyOCRtext[:1500])
         util.clean_after()
         final = util.final_coupling(textapryse, easyOCRtext)
         with open(text_filename, 'w', encoding='utf-8') as text_file:
