@@ -12,14 +12,6 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 
-#def remove_unwanted_lines(text):
-    #unwanted_text = "PDFTron PDF2Text: This page is skipped when running in the demo mode."
-    #lines = text.splitlines()
-    #filtered_lines = [line for line in lines if unwanted_text not in line]
-    #print(filtered_lines)
-    #return "\n".join(filtered_lines)
-
-
 def write_texts_to_files(textapryse, easyOCRtext):
     textapryse_filename = os.path.join("final", 'textapryse_output.txt')
     easyOCRtext_filename = os.path.join("final", 'easyOCR_output.txt')
