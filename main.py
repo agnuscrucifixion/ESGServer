@@ -35,13 +35,11 @@ def upload_pdf():
         print(filepath)
         file.save(filepath)
         textapryse = apryse.convert_to_text(filepath)
-        #textapryse = remove_unwanted_lines(textapryse)
-        #easyOCRtext = easyOCR.process_images(filepath)
-        easyOCRtext = ""
+        easyOCRtext = easyOCR.process_images(filepath)
         write_texts_to_files(textapryse, easyOCRtext)
 
-        util.clean_after()
-        final = util.final_coupling(textapryse, easyOCRtext)
+        #util.clean_after()
+        final = util.final_coupling(easyOCRtext, textapryse)
         with open(text_filename, 'w', encoding='utf-8') as text_file:
             text_file.write(final)
         return send_file(text_filename, as_attachment=True, download_name=text_filename)

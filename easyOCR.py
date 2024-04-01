@@ -22,6 +22,7 @@ def process_images(path):
             result = reader.readtext(image_path, detail=0, paragraph=True)
             print(image_path)
             for paragraph in result:
-                text += (paragraph + '\n\n')
+                if len(paragraph) > 2:
+                    text += (paragraph + '\n\n')
 
     return text

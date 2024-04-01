@@ -20,4 +20,4 @@ def clean_after():
 
 
 def final_coupling(pathtexteasyocr, pathtextapryse):
-    return "final"
+    return pathtextapryse
