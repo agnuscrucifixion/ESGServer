@@ -55,7 +55,8 @@ def check_string_in_file(file_path, string_to_check):
 
 
 def convert_to_text(path):
-    name_pdf = path.split('\\')[len(path.split('\\')) - 1].split('.')[0]
+    print(path)
+    name_pdf = path.split('/')[len(path.split('/')) - 1].split('.')[0]
     print(name_pdf)
     text = ""
     apryse_text_dir = "temp/apryse_text"
@@ -69,10 +70,7 @@ def convert_to_text(path):
         return
 
     text_files = [f for f in os.listdir(apryse_text_dir) if f.endswith(".txt")]
-    text_files_sorted = []
-    if len(text_files) == 1:
-        os.rename(os.path.join(apryse_text_dir, "page.txt"), os.path.join(apryse_text_dir, "page_1.txt"))
-        text_files_sorted = sorted(text_files, key=lambda x: int(x.split('_')[1].split('.')[0]))
+    text_files_sorted = sorted(text_files, key=lambda x: int(x.split('_')[1].split('.')[0]))
     print(text_files_sorted)
     for text_file in text_files_sorted:
         file_path = os.path.join(apryse_text_dir, text_file)
@@ -91,13 +89,14 @@ def convert_to_text(path):
                           os.path.join(apryse_text_dir, name_pdf + "_" + page_number + ".txt"))
             else:
                 break
+
     for text_file in text_files_sorted:
         file_path = os.path.join(apryse_text_dir, text_file)
         if os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
                 if demo_string not in content:
-                    text += process_text(content) + "\n\n"
+                    text += re.sub(r"[^\w\s,.?!]", "", process_text(content) + "\n\n")
                 else:
                     print(content)
 

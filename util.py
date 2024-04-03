@@ -14,6 +14,7 @@ def clean_after():
     try:
         shutil.rmtree("temp")
         shutil.rmtree("uploads")
+        shutil.rmtree("final")
         print("Временная папка и все ее содержимое успешно удалены.")
     except FileNotFoundError:
         print("Временная папка не существует.")

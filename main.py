@@ -8,8 +8,15 @@ import re
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+
+
+def before():
+    if not os.path.exists("temp"):
+        os.mkdir("temp")
+        os.mkdir("final")
+        os.mkdir("temp/images")
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
 
 
 def write_texts_to_files(textapryse, easyOCRtext):
@@ -20,6 +27,13 @@ def write_texts_to_files(textapryse, easyOCRtext):
 
     with open(easyOCRtext_filename, 'w', encoding='utf-8') as file:
         file.write(easyOCRtext)
+
+
+@app.route('/clean')
+def take():
+    util.clean_after()
+    before()
+    return "good"
 
 
 @app.route('/upload-pdf', methods=['POST'])
@@ -34,12 +48,10 @@ def upload_pdf():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         print(filepath)
         file.save(filepath)
-        textapryse = ""#apryse.convert_to_text(filepath)
-        #easyOCRtext = easyOCR.process_images(filepath)
-        easyOCRtext = easyOCR.readOCR(filepath)
+        textapryse = ""  # apryse.convert_to_text(filepath)
+        # easyOCRtext = easyOCR.process_images(filepath)
+        easyOCRtext = easyOCR.process_images(filepath)
         write_texts_to_files(textapryse, easyOCRtext)
-
-        #util.clean_after()
         final = util.final_coupling(easyOCRtext, textapryse)
         with open(text_filename, 'w', encoding='utf-8') as text_file:
             text_file.write(final)
@@ -47,8 +59,5 @@ def upload_pdf():
 
 
 if __name__ == '__main__':
-    if not os.path.exists("temp"):
-        os.mkdir("temp")
-        os.mkdir("final")
-        os.mkdir("temp/images")
+    before()
     app.run(debug=True, host='0.0.0.0', port=5000)
