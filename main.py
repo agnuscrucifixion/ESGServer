@@ -34,8 +34,9 @@ def upload_pdf():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         print(filepath)
         file.save(filepath)
-        textapryse = apryse.convert_to_text(filepath)
-        easyOCRtext = easyOCR.process_images(filepath)
+        textapryse = ""#apryse.convert_to_text(filepath)
+        #easyOCRtext = easyOCR.process_images(filepath)
+        easyOCRtext = easyOCR.readOCR(filepath)
         write_texts_to_files(textapryse, easyOCRtext)
 
         #util.clean_after()

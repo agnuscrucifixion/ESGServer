@@ -1,6 +1,20 @@
 import os
+
+from apryse_sdk.PDFNetPython import PDFNet, PDFDoc, OCRModule, OCROptions
 from pdf2image import convert_from_path
 import easyocr
+from apryse_sdk import *
+import apryse
+
+def readOCR(path):
+    PDFNet.Initialize("demo:1711213936836:7f0d66cd0300000000556913c63374cbc751215276bb2b70995b128e09")
+    doc = PDFDoc()
+    opts = OCROptions()
+    opts.AddLang("rus")
+    to_png(path)
+    OCRModule.ImageToPDF(doc, "temp/images/page54.jpg", opts)
+    doc.Save("uploads/page.pdf", 0)
+    return apryse.convert_to_text("uploads/page.pdf")
 
 
 def to_png(path):
