@@ -56,7 +56,7 @@ def check_string_in_file(file_path, string_to_check):
 
 def convert_to_text(path):
     print(path)
-    name_pdf = path.split('/')[len(path.split('/')) - 1].split('.')[0]
+    name_pdf = os.path.splitext(os.path.basename(path))[0]
     print(name_pdf)
     text = ""
     apryse_text_dir = "temp/apryse_text"

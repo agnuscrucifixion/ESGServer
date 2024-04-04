@@ -6,6 +6,7 @@ from pdf2image import convert_from_path
 import easyocr
 from apryse_sdk import *
 import apryse
+import re
 
 
 def readOCR(path):
@@ -68,6 +69,6 @@ def process_images(path):
             for paragraph in result:
                 if len(paragraph) > 2:
                     temp += paragraph + "\n"
-            text += (apryse.process_text(temp) + '\n\n')
+            text += re.sub(r"[^\w\s,.?!]", "", apryse.process_text(temp) + "\n\n")
 
     return text

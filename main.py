@@ -19,15 +19,6 @@ def before():
         os.makedirs(UPLOAD_FOLDER)
 
 
-def write_texts_to_files(textapryse, easyOCRtext):
-    textapryse_filename = os.path.join("final", 'textapryse_output.txt')
-    easyOCRtext_filename = os.path.join("final", 'easyOCR_output.txt')
-    with open(textapryse_filename, 'w', encoding='utf-8') as file:
-        file.write(textapryse)
-
-    with open(easyOCRtext_filename, 'w', encoding='utf-8') as file:
-        file.write(easyOCRtext)
-
 
 @app.route('/clean')
 def take():
@@ -48,10 +39,10 @@ def upload_pdf():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         print(filepath)
         file.save(filepath)
-        textapryse = ""  # apryse.convert_to_text(filepath)
-        # easyOCRtext = easyOCR.process_images(filepath)
-        easyOCRtext = easyOCR.process_images(filepath)
-        write_texts_to_files(textapryse, easyOCRtext)
+        textapryse = apryse.convert_to_text(filepath)
+        easyOCRtext = ""
+        if not textapryse.strip():
+            easyOCRtext = easyOCR.process_images(filepath)
         final = util.final_coupling(easyOCRtext, textapryse)
         with open(text_filename, 'w', encoding='utf-8') as text_file:
             text_file.write(final)

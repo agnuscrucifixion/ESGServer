@@ -21,4 +21,6 @@ def clean_after():
 
 
 def final_coupling(pathtexteasyocr, pathtextapryse):
-    return pathtexteasyocr
+    if not pathtextapryse.strip():
+        return pathtexteasyocr
+    return pathtextapryse
