@@ -1,5 +1,5 @@
 import os
-from PIL import Image, ImageEnhance
+from PIL import ImageEnhance
 
 from pdf2image import convert_from_path
 import easyocr
@@ -50,5 +50,6 @@ def process_images(path):
                 if len(paragraph) > 2:
                     temp += paragraph + "\n"
             text += re.sub(r"[^\w\s,.?!]", "", apryse.process_text(temp) + "\n\n")
-
+    text = apryse.clean_text_if_needed(text)
+    text = apryse.process_text(text)
     return text

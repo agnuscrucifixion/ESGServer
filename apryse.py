@@ -10,6 +10,23 @@ def extract_number(filename):
     return 0
 
 
+def clean_text_if_needed(text):
+    text_without_spaces = text.replace(" ", "")
+    total_chars = len(text_without_spaces)
+    latin_chars = sum(1 for char in text_without_spaces if 'a' <= char.lower() <= 'z')
+    latin_percentage = (latin_chars / total_chars) if total_chars > 0 else 0
+    if latin_percentage > 0.35:
+        cleaned_text = ''.join(char for char in text if not ('a' <= char.lower() <= 'z'))
+        cleaned_text = re.sub(r" {3,}", "\n", cleaned_text)
+        cleaned_text_lines = cleaned_text.splitlines(keepends=True)
+        cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
+                               and re.search(r"[а-яА-Яa-zA-Z]", line)
+                               and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
+        return cleaned_text
+    else:
+        return text
+
+
 def process_text(input_text):
     lines = input_text.split('\n')
     processed_text = []
@@ -101,4 +118,5 @@ def convert_to_text(path):
                     print(content)
 
     print("Создан текстовый файл от Apryse")
+    text = clean_text_if_needed(text)
     return text
