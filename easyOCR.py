@@ -50,6 +50,7 @@ def process_images(path):
                 if len(paragraph) > 2:
                     temp += paragraph + "\n"
             text += re.sub(r"[^\w\s,.?!]", "", apryse.process_text(temp) + "\n\n")
-    text = apryse.clean_text_if_needed(text)
+
+    text = apryse.clean_text_if_needed(text, True)
     text = apryse.process_text(text)
     return text

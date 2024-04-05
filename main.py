@@ -35,13 +35,20 @@ def upload_pdf():
     file = request.files['file']
     if file.filename == '':
         return "No selected file", 400
+    ocr_string = request.form.get('ocr', 'false').lower()
+    ocr = ocr_string == 'true'
+    if ocr is None:
+        return "OCR flag not provided", 400
+    print(ocr)
     if file:
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         print(filepath)
         file.save(filepath)
-        textapryse = apryse.convert_to_text(filepath)
+        textapryse = ""
+        if not ocr:
+            textapryse = apryse.convert_to_text(filepath)
         easyOCRtext = ""
-        if not textapryse.strip():
+        if not textapryse.strip() or ocr:
             easyOCRtext = easyOCR.process_images(filepath)
         final = util.final_coupling(easyOCRtext, textapryse)
         with open(text_filename, 'w', encoding='utf-8') as text_file:

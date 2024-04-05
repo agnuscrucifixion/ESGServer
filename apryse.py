@@ -10,7 +10,7 @@ def extract_number(filename):
     return 0
 
 
-def clean_text_if_needed(text):
+def clean_text_if_needed(text, ocr):
     text_without_spaces = text.replace(" ", "")
     total_chars = len(text_without_spaces)
     latin_chars = sum(1 for char in text_without_spaces if 'a' <= char.lower() <= 'z')
@@ -19,10 +19,17 @@ def clean_text_if_needed(text):
         cleaned_text = ''.join(char for char in text if not ('a' <= char.lower() <= 'z'))
         cleaned_text = re.sub(r" {3,}", "\n", cleaned_text)
         cleaned_text_lines = cleaned_text.splitlines(keepends=True)
-        cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
+        if ocr:
+            cleaned_text = '\n\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
                                and re.search(r"[а-яА-Яa-zA-Z]", line)
                                and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
-        return cleaned_text
+            return cleaned_text
+        else:
+            cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
+                                       and re.search(r"[а-яА-Яa-zA-Z]", line)
+                                       and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
+            return cleaned_text
+
     else:
         return text
 
@@ -41,7 +48,7 @@ def process_text(input_text):
                     point = ''
                     if paragraph[len(paragraph) - 1] == '':
                         point = '.'
-                    processed_text.append(' '.join(paragraph).replace('¬ ', '').replace('¬', '') + point)
+                    processed_text.append(' '.join(paragraph).replace('¬ ', '').replace('¬', '') + point + "\n")
                     paragraph = []
                 processed_text.append(line.strip())
             else:
@@ -95,6 +102,7 @@ def convert_to_text(path):
             content = ""
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
+                print(content)
             if demo_string in content:
                 page_number = text_file.split('_')[1].split('.')[0]
                 os.remove(file_path)
@@ -118,5 +126,6 @@ def convert_to_text(path):
                     print(content)
 
     print("Создан текстовый файл от Apryse")
-    text = clean_text_if_needed(text)
+    text = clean_text_if_needed(text, False)
+    text = process_text(text)
     return text
