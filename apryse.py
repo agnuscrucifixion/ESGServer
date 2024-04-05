@@ -15,7 +15,7 @@ def clean_text_if_needed(text, ocr):
     total_chars = len(text_without_spaces)
     latin_chars = sum(1 for char in text_without_spaces if 'a' <= char.lower() <= 'z')
     latin_percentage = (latin_chars / total_chars) if total_chars > 0 else 0
-    if latin_percentage > 0.35:
+    if 0.35 < latin_percentage < 0.7:
         cleaned_text = ''.join(char for char in text if not ('a' <= char.lower() <= 'z'))
         cleaned_text = re.sub(r" {3,}", "\n", cleaned_text)
         cleaned_text_lines = cleaned_text.splitlines(keepends=True)
