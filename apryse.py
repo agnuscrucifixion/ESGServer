@@ -3,79 +3,37 @@ import subprocess
 import re
 
 
-def extract_number(filename):
-    match = re.search(r'\d+', filename)
-    if match:
-        return int(match.group())
-    return 0
-
-
 def clean_text_if_needed(text, ocr):
-    text_without_spaces = text.replace(" ", "")
-    total_chars = len(text_without_spaces)
-    latin_chars = sum(1 for char in text_without_spaces if 'a' <= char.lower() <= 'z')
-    latin_percentage = (latin_chars / total_chars) if total_chars > 0 else 0
-    if 0.35 < latin_percentage < 0.7:
-        cleaned_text = ''.join(char for char in text if not ('a' <= char.lower() <= 'z'))
-        cleaned_text = re.sub(r" {3,}", "\n", cleaned_text)
-        cleaned_text_lines = cleaned_text.splitlines(keepends=True)
-        if ocr:
-            cleaned_text = '\n\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
-                               and re.search(r"[а-яА-Яa-zA-Z]", line)
-                               and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
-            return cleaned_text
-        else:
-            cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
-                                       and re.search(r"[а-яА-Яa-zA-Z]", line)
-                                       and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
-            return cleaned_text
-
+    cleaned_text = re.sub(r" {3,}", "\n", text)
+    cleaned_text_lines = cleaned_text.splitlines(keepends=True)
+    if ocr:
+        cleaned_text = '\n\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
+                                   and re.search(r"[а-яА-Яa-zA-Z]", line)
+                                   and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
+        return cleaned_text
     else:
-        return text
+        cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
+                                 and re.search(r"[а-яА-Яa-zA-Z]", line)
+                                 and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
+        return cleaned_text
 
 
-def process_text(input_text):
-    lines = input_text.split('\n')
-    processed_text = []
-    paragraph = []
-
-    for line in lines:
-        if len(line) > 2:
-            is_heading = sum(c.isupper() for c in line) > len(line) / 2
-
-            if is_heading:
-                if paragraph:
-                    point = ''
-                    if paragraph[len(paragraph) - 1] == '':
-                        point = '.'
-                    processed_text.append(' '.join(paragraph).replace('¬ ', '').replace('¬', '') + point + "\n")
-                    paragraph = []
-                processed_text.append(line.strip())
-            else:
-                point = ''
-                if line[len(line) - 1] == '':
-                    point = '.'
-                paragraph.append(''.join(line.strip()).replace('¬ ', '').replace('¬', '') + point)
-
-    if paragraph:
-        processed_text.append(' '.join(paragraph).replace('¬ ', '').replace('¬', ''))
-
-    return '\n'.join(processed_text)
-
-
-def check_string_in_file(file_path, string_to_check):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                if string_to_check in line:
-                    return False
-        return True
-    except FileNotFoundError:
-        print("Файл не найден.")
-        return False
-    except IOError:
-        print("Произошла ошибка при чтении файла.")
-        return False
+def merge_lines(text):
+    lines = text.split('\n')
+    merged_text = ""
+    lines = list(filter(lambda s: s.strip(), lines))
+    print(lines)
+    for i in range(len(lines) - 1):
+        current_line = lines[i].strip()
+        next_line = lines[i + 1].strip()
+        if (current_line.endswith(tuple('abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя,:')) and
+            not next_line.startswith(tuple('0123456789'))) or \
+                (current_line.endswith(',') and next_line[0].isupper()):
+            merged_text += current_line + ' '
+        else:
+            merged_text += current_line + '\n'
+    merged_text += lines[-1].strip()
+    return merged_text
 
 
 def convert_to_text(path):
@@ -121,11 +79,11 @@ def convert_to_text(path):
             with open(file_path, "r", encoding="utf-8") as file:
                 content = file.read()
                 if demo_string not in content:
-                    text += re.sub(r"[^\w\s,.?!]", "", process_text(content) + "\n\n")
+                    text += re.sub(r"[^\w\s,.?!]", "", content + "\n")
                 else:
                     print(content)
 
     print("Создан текстовый файл от Apryse")
     text = clean_text_if_needed(text, False)
-    text = process_text(text)
+    text = merge_lines(text)
     return text

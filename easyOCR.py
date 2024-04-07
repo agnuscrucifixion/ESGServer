@@ -49,8 +49,8 @@ def process_images(path):
             for paragraph in result:
                 if len(paragraph) > 2:
                     temp += paragraph + "\n"
-            text += re.sub(r"[^\w\s,.?!]", "", apryse.process_text(temp) + "\n\n")
+            text += re.sub(r"[^\w\s,.?!]", "", temp + "\n")
 
     text = apryse.clean_text_if_needed(text, True)
-    text = apryse.process_text(text)
+    text = apryse.merge_lines(text)
     return text
