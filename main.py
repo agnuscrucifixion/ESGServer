@@ -19,7 +19,6 @@ def before():
         os.makedirs(UPLOAD_FOLDER)
 
 
-
 @app.route('/clean')
 def take():
     util.clean_after()

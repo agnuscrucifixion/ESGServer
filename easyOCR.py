@@ -3,7 +3,7 @@ from PIL import ImageEnhance
 
 from pdf2image import convert_from_path
 import easyocr
-import apryse
+import util
 import re
 
 
@@ -51,6 +51,6 @@ def process_images(path):
                     temp += paragraph + "\n"
             text += re.sub(r"[^\w\s,.?!]", "", temp + "\n")
 
-    text = apryse.clean_text_if_needed(text, True)
-    text = apryse.merge_lines(text)
+    text = util.clean_text_if_needed(text, True)
+    text = util.merge_lines(text)
     return text

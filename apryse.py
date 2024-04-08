@@ -1,39 +1,7 @@
 import os
 import subprocess
 import re
-
-
-def clean_text_if_needed(text, ocr):
-    cleaned_text = re.sub(r" {3,}", "\n", text)
-    cleaned_text_lines = cleaned_text.splitlines(keepends=True)
-    if ocr:
-        cleaned_text = '\n\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
-                                   and re.search(r"[а-яА-Яa-zA-Z]", line)
-                                   and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
-        return cleaned_text
-    else:
-        cleaned_text = '\n'.join(line for line in cleaned_text_lines if len(line.strip()) >= 4
-                                 and re.search(r"[а-яА-Яa-zA-Z]", line)
-                                 and not re.fullmatch(r"[0-9.,\s]+", line.strip()))
-        return cleaned_text
-
-
-def merge_lines(text):
-    lines = text.split('\n')
-    merged_text = ""
-    lines = list(filter(lambda s: s.strip(), lines))
-    print(lines)
-    for i in range(len(lines) - 1):
-        current_line = lines[i].strip()
-        next_line = lines[i + 1].strip()
-        if (current_line.endswith(tuple('abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя,:')) and
-            not next_line.startswith(tuple('0123456789'))) or \
-                (current_line.endswith(',') and next_line[0].isupper()):
-            merged_text += current_line + ' '
-        else:
-            merged_text += current_line + '\n'
-    merged_text += lines[-1].strip()
-    return merged_text
+import util
 
 
 def convert_to_text(path):
@@ -84,6 +52,6 @@ def convert_to_text(path):
                     print(content)
 
     print("Создан текстовый файл от Apryse")
-    text = clean_text_if_needed(text, False)
-    text = merge_lines(text)
+    text = util.clean_text_if_needed(text, False)
+    text = util.merge_lines(text)
     return text
