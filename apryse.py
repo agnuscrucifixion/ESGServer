@@ -13,7 +13,7 @@ def convert_to_text(path):
     demo_string = "PDFTron PDF2Text: This page is skipped when running in the demo mode."
 
     try:
-        subprocess.run(["pdf2text", "--output", apryse_text_dir, path], check=True)
+        subprocess.run(["./pdf2text", "--output", apryse_text_dir, path], check=True)
         print("Файл PDF успешно конвертирован в текст и сохранен.")
     except subprocess.CalledProcessError as e:
         print(f"Ошибка при конвертации файла PDF: {e}")
@@ -34,7 +34,7 @@ def convert_to_text(path):
                 os.remove(file_path)
                 print(page_number)
                 subprocess.run(
-                    ["pdf2text", "--output", apryse_text_dir, "--pages", page_number, path],
+                    ["./pdf2text", "--output", apryse_text_dir, "--pages", page_number, path],
                     check=True)
                 os.rename(os.path.join(apryse_text_dir, name_pdf + ".txt"),
                           os.path.join(apryse_text_dir, name_pdf + "_" + page_number + ".txt"))

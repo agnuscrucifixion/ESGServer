@@ -39,10 +39,8 @@ def upload_pdf():
         ocr = ocr_string == 'true'
         if ocr is None:
             return "OCR flag not provided", 400
-        print(ocr)
         if file:
             filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-            print(filepath)
             file.save(filepath)
             textapryse = ""
             if not ocr:
